@@ -4,52 +4,75 @@
 <title>GPS Coordinates Querry</title>
 <link rel="shortcut icon" type="image/x-icon" href="image/title.ico" />
 <link rel="stylesheet" href="gpscqw/gpscqw.css" />
-
-<!--script>
-total_height = document.documentElement.clientHeight;
-colHeight = total_height-320-document.getElementById("mapctl").offsetTop;
-document.getElementById("mapctl").style.height=colHeight+"px";
-</script-->
+<script src="gpscqw/gpscqw.js"></script>
 
 <!-- Leaflet -->
 <link rel="stylesheet" href="leaflet/leaflet.css" />
 <script src="leaflet/leaflet-src.js"></script>
 	
 </head>
-<body >
+<body  onload="InitMap()">
 
+<!--
 <div id="head">
-<!--div class="head_wrapper"-->
+<div class="head_wrapper">
 <div class="s_form">
-<!--div class="s_form_wrapper"-->
+<div class="s_form_wrapper">
 <div id="lg"><img src="http://www.baidu.com/img/bd_logo1.png" width="135" height="65"></div>
 <form id="form" name="f" action="" class="fm" method="get">
 <span class="s_ipt_wr"><input name="wd" class="s_ipt" value="" maxlength="255"/></span><span class="s_btn_wr"><input type="submit" id="su" value="Search" class="s_btn">
 </span>
 </form>
-<div id="mapctl"></div>
-<!--/div-->
-<!--/div-->
+</div>
+</div>
+</div>
+</div>
+-->
+
+<div id="head">
+<div class="s_form">
+<div id="lg"><img src="http://www.baidu.com/img/bd_logo1.png" width="135" height="65"></div>
+<form id="form" name="f" action="" class="fm" method="get">
+<span class="s_ipt_wr"><input id="wd" name="wd" class="s_ipt" maxlength="255" placeholder="31.20333, 121.59722"/></span><input type="submit" id="su" value="Search" class="s_btn" onclick="setMarker();">
+</form>
+</div>
+</div>
+<div id="mapctl">
+<script>
+clientHeight = document.body.clientHeight;
+head_height = document.getElementById('head').offsetHeight;
+map_height = clientHeight - head_height - 20;
+document.getElementById('mapctl').style.height = map_height + 'px';
+</script>
 </div>
 
-</div>
 
 <!-- GPS Coodinates Querry{ -->
 
 <!-- GPS Coodinates Querry} -->
 
-
 <script>
-var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> | GPS Coordinates Querry Websitecontributors',. 
-		osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-
-	var mapctl = L.map('mapctl').setView([31.20333, 121.59722], 8).addLayer(osm);
-var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+/*	var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 		osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> | GPS Coordinates Querry Website. contributors',
 		osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+		var mapctl = L.map('mapctl').setView([31.20333, 121.59722], 8).addLayer(osm);*/
+	/*L.marker([31.20333, 121.59722])
+		.addTo(mapctl)
+		.bindPopup('31.20333<br />121.59722')
+		.openPopup();*/
 
-	var mapctl = L.map('mapctl').setView([31.20333, 121.59722], 8).addLayer(osm);
+//function setMarker(){
+
+	/*L.marker([31.20333, 121.59722])
+		.addTo(mapctl)
+		.bindPopup('31.20333<br />121.59722')
+		.openPopup();*/
+/*
+var layer = L.Marker([31.20333, 121.59722]).addTo(mapctl);
+layer.bindPopup('31.20333<br />121.59722').openPopup();*/
+//layer.remove();		
+//}
 </script>
+
 </body>
 </html>
