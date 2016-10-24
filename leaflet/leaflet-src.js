@@ -13040,58 +13040,5 @@ L.Map.include({
 		this.fire('locationfound', data);
 	}
 });
-
-//pzhaoyang {
-L.Control.LatLngInfo = L.Control.extend({
-	// @section
-	// @aka Control.Scale options
-	options: {
-		position: 'topright',
-	},
-	
-	onAdd: function (map) {
-		var className = 'custom-control-LatLngInfo',
-		    container = L.DomUtil.create('div', className),
-		    options = this.options;
-
-		this._addLatLngInfo(options, className + '-line', container);
-
-		map.on('mousemove', this._update, this);
-		map.on('mouseout', this._close, this);
-		return container;
-	},
-
-	
-	_addLatLngInfo: function (options, className, container) {
-			this._mLatLngInfo = L.DomUtil.create('div', className, container);
-	},
-
-	_update: function (e) {
-		var cText;
-		cText = '[' + e.latlng.lat + ', ' + e.latlng.lng + ']';//this.latLonToEN([e.latlng.lat, e.latlng.lng]);
-		this._mLatLngInfo.innerHTML = cText;
-	},
-	_close: function(){
-		this._mLatLngInfo.innerHTML = "";
-	},
-	
-	latLonToEN:function(lonlat){
-		var  nED,nEF,nEM,nND,nNF,nNM,nE,nN;
-		nED=parseInt(lonlat[0]);
-		nEF=parseInt((lonlat[0]-nED)*60);
-		nEM=parseInt(((lonlat[0]-nED)*60-nEF)*60);
-		nND=parseInt(lonlat[1]);
-		nNF=parseInt((lonlat[1]-nND)*60);
-		nNM=parseInt(((lonlat[1]-nND)*60-nNF)*60);
-		nE="N"+nED.toString()+"°"+nEF.toString()+"′"+nEM.toString()+"″";
-		nN="E"+nND.toString()+"°"+nNF.toString()+"′"+nNM.toString()+"″";
-		return nE+" | "+nN;
-	}
-});
-L.control.LatLngInfo = function (options) {
-	return new L.Control.LatLngInfo(options);
-};
-
-//pzhaoyang}
 }(window, document));
 //# sourceMappingURL=leaflet-src.map

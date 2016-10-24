@@ -84,3 +84,64 @@ input{
 .s_form_wrapper{
 	position:relative;
 }
+
+
+
+/*
+.leaflet-control-locate a {
+  font-size: 1.4em;
+  color: #444;
+}
+.leaflet-control-locate.active a {
+  color: #2074B6;
+}
+.leaflet-control-locate.active.following a {
+  color: #FC8428;
+}
+
+.leaflet-control-locate a {
+  padding: 3px 0 0 8px;
+}
+.leaflet-control-locate.requesting a {
+  padding: 3px 0 0 4px;
+}*/
+
+
+.leaflet-control-geocoder a {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+}
+
+.leaflet-control-geocoder {
+	box-shadow: 0 1px 7px #999;
+	background: #f8f8f9;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+}
+
+.leaflet-control-geocoder a {
+	background-image: url(images/geocoder.png);
+	width: 36px;
+	height: 36px;
+}
+
+.leaflet-touch .leaflet-control-geocoder a {
+	width: 44px;
+	height: 44px;
+}
+
+.leaflet-control-geocoder .leaflet-control-geocoder-form,
+.leaflet-control-geocoder-expanded .leaflet-control-geocoder-toggle {
+	display: none;
+}
+
+.leaflet-control-geocoder-expanded .leaflet-control-geocoder-form {
+	display: block;
+	position: relative;
+}
+
+.leaflet-control-geocoder-expanded .leaflet-control-geocoder-form {
+	padding: 5px;
+}
