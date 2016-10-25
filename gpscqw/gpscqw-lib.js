@@ -41,17 +41,16 @@ L.Control.LatLngInfo = L.Control.extend({
 
 	
 	_addLatLngInfo: function (options, className, container) {
-			this._mLatLngInfo = L.DomUtil.create('div', className, container);
-			this._mLatLngInfo.style.background = '#d89';
-			this._mLatLngInfo.style.fontFamily = 'sans-serif';
-			this._mLatLngInfo.style.fontsize = '25';
-			this._mLatLngInfo.style.fontcolor = '#fff';
-			
+		this._mLatLngInfo = L.DomUtil.create('div', className, container);
 	},
 
 	_update: function (e) {
 		var cText;
-		cText = '[' + L.Util.formatNum(e.latlng.lat, 4) + ', ' + L.Util.formatNum(e.latlng.lng, 4) + ']';//this.latLonToEN([e.latlng.lat, e.latlng.lng]);
+		cText = 'Lat: ' 
+			+ L.Util.formatNum(e.latlng.lat, 5)
+			+ '<br >Lng: ' 
+			+ L.Util.formatNum(e.latlng.lng, 5);//this.latLonToEN([e.latlng.lat, e.latlng.lng]);
+		
 		this._mLatLngInfo.innerHTML = cText;
 	},
 	_close: function(){
@@ -81,7 +80,7 @@ L.control.LatLngInfo = function (options) {
  **********************************************
  */
 L.GeoIP = L.extend({
-
+	
     getPosition: function (ip) {
         var url = "http://freegeoip.net/json/";
         var result = L.latLng(0, 0);
@@ -110,14 +109,14 @@ L.GeoIP = L.extend({
 
     centerMapOnPosition: function (map, zoom, ip) {
         var position = L.GeoIP.getPosition(ip);
-        map.setView(position, zoom);
+        map.setView(position, zoom, ip);
     }
 });
 
 
 L.Control.OSMGeocoder = L.Control.extend({
 	options: {
-		collapsed: true,
+		collapsed: false,
 		position: 'topleft',
 		text: 'Search',
 		bounds: null, // L.LatLngBounds
@@ -144,47 +143,37 @@ L.Control.OSMGeocoder = L.Control.extend({
 	onAdd: function (map) {
 		this._map = map;
 
-		var className = 'leaflet-control-geocoder',
-		container = this._container = L.DomUtil.create('div', className);
+		var className = 'leaflet-control-geocoder';
+		this._container = L.DomUtil.create('div', className);
 
-		L.DomEvent.disableClickPropagation(container);
+		L.DomEvent.disableClickPropagation(this._container);
 
-		var form = this._form = L.DomUtil.create('form', className + '-form');
+		this._form = L.DomUtil.create('form', className + '-form');
+		this._span_ipt = L.DomUtil.create('span', className + '-span_iptwr');
+		this._input = L.DomUtil.create('input', className + '-input');
+		this._input.type = "text";
+		
+		this._span_bt = L.DomUtil.create('span', className + '-span_btwr');
+		this._submit = L.DomUtil.create('input', className + '-submit');
+		this._submit.type = "submit";
+		this._submit.value = this.options.text;
 
-		var input = this._input = document.createElement('input');
-		input.type = "text";
+		this._form.appendChild(this._span_ipt);
+		this._span_ipt.appendChild(this._input);
+		this._form.appendChild(this._span_bt);
+		this._span_bt.appendChild(this._submit);
 
-		var submit = document.createElement('input');
-		submit.type = "submit";
-		submit.value = this.options.text;
+		L.DomEvent.addListener(this._form, 'submit', this._geocode, this);
 
-		form.appendChild(input);
-		form.appendChild(submit);
+		L.DomUtil.addClass(this._container, 'leaflet-control-geocoder-search');
+		this._container.appendChild(this._form);
 
-		L.DomEvent.addListener(form, 'submit', this._geocode, this);
-
-		if (this.options.collapsed) {
-			L.DomEvent.addListener(container, 'mouseover', this._expand, this);
-			L.DomEvent.addListener(container, 'mouseout', this._collapse, this);
-
-			var link = this._layersLink = L.DomUtil.create('a', className + '-toggle', container);
-			link.href = '#';
-			link.title = 'Nominatim Geocoder';
-
-			L.DomEvent.addListener(link, L.Browser.touch ? 'click' : 'focus', this._expand, this);
-
-			this._map.on('movestart', this._collapse, this);
-		} else {
-			this._expand();
-		}
-
-		container.appendChild(form);
-
-		return container;
+		return this._container;
 	},
     
     /* helper functions for cordinate extraction */
     _createSearchResult : function(lat, lon) {
+		console.log("LatLon__createSearchResult: "+lat+" "+lon);
         //creates an position description similar to the result of a Nominatim search
         var diff = 0.005;
         var result = [];
@@ -198,6 +187,7 @@ L.Control.OSMGeocoder = L.Control.extend({
     },
     _isLatLon : function (q) {
         //"lon lat" => xx.xxx x.xxxxx
+		console.log("is LatLon_LatLon: "+q);
         var re = /(-?\d+\.\d+)\s(-?\d+\.\d+)/;
         var m = re.exec(q);
         if (m != undefined) return m;
@@ -206,18 +196,28 @@ L.Control.OSMGeocoder = L.Control.extend({
         re = /lat\D*(-?\d+\.\d+)\D*lon\D*(-?\d+\.\d+)/;
         m = re.exec(q);
         //showRegExpResult(m);
-        if (m != undefined) return m;
-        else return null;
+        if ((m != undefined)){
+			console.log("pzhaoyang _isLatLon m="+m);
+			return m;
+		}else{
+			console.log("pzhaoyang _isLatLon m="+m);
+			return null;
+		}
     },
     _isLatLon_decMin : function (q) {
-        console.log("is LatLon?: "+q);
+        console.log("is LatLon_decMin: "+q);
         //N 53° 13.785' E 010° 23.887'
         //re = /[NS]\s*(\d+)\D*(\d+\.\d+).?\s*[EW]\s*(\d+)\D*(\d+\.\d+)\D*/;
         re = /([ns])\s*(\d+)\D*(\d+\.\d+).?\s*([ew])\s*(\d+)\D*(\d+\.\d+)/i;
         m = re.exec(q.toLowerCase());
         //showRegExpResult(m);
-        if ((m != undefined)) return m;
-        else return null;
+        if ((m != undefined)){
+			console.log("pzhaoyang _isLatLon_decMin m="+m);
+			return m;
+		}else{
+			console.log("pzhaoyang _isLatLon_decMin m="+m);
+			return null;
+		}
         // +- dec min +- dec min
     },
 
@@ -225,17 +225,16 @@ L.Control.OSMGeocoder = L.Control.extend({
 		L.DomEvent.preventDefault(event);
         var q = this._input.value;
         //try to find corrdinates
-		if (this._isLatLon(q) != null)
-		{
+		if (this._isLatLon(q) != null){
 			var m = this._isLatLon(q);
-			console.log("LatLon: "+m[1]+" "+m[2]);
+			console.log("pzhaoyang1");
+			console.log("LatLon_geocode: "+m[1]+" "+m[2]);
 			//m = {lon, lat}
             this.options.callback.call(this, this._createSearchResult(m[1],m[2]));
             return;
-		}
-		else if (this._isLatLon_decMin(q) != null)
-		{
+		}else if (this._isLatLon_decMin(q) != null){
 			var m = this._isLatLon_decMin(q);
+			console.log("pzhaoyang2");
 			//m: [ns, lat dec, lat min, ew, lon dec, lon min]
 			var temp  = new Array();
 			temp['n'] = 1;
@@ -285,23 +284,13 @@ L.Control.OSMGeocoder = L.Control.extend({
 
 		var url = " http://nominatim.openstreetmap.org/search" + L.Util.getParamString(params),
 		script = document.createElement("script");
-
-
-
-
+		
 		script.type = "text/javascript";
 		script.src = url;
 		script.id = this._callbackId;
 		document.getElementsByTagName("head")[0].appendChild(script);
 	},
 
-	_expand: function () {
-		L.DomUtil.addClass(this._container, 'leaflet-control-geocoder-expanded');
-	},
-
-	_collapse: function () {
-		this._container.className = this._container.className.replace(' leaflet-control-geocoder-expanded', '');
-	}
 });
 
 });
