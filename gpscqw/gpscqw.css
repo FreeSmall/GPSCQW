@@ -37,7 +37,7 @@ html,body {
 .leaflet-control-geocoder-input{
 	width:100%;
 	height:22px;
-	font:18px/18px arial;
+	font:14px arial;
 	line-height:22px\9;
 	margin:6px 0 0 7px;
 	padding:0;

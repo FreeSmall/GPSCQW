@@ -20,5 +20,5 @@ function InitMap(){
 	this.map.addControl(new L.Control.OSMGeocoder());
 	
 	//setMarker(L.GeoIP.getPosition(), 15);
-	L.CQW.setMarker(this.map, L.GeoIP.getPosition(), {zoom:15,tips:"aa"});
+	L.CQW.setMarker(this.map, L.GeoIP.getPosition(),{zoom:15});
 }
