@@ -18,13 +18,7 @@ function InitMap(){
 	L.control.LatLngInfo().addTo(this.map);
 	L.control.scale({imperial:false, updsateWhenIdle:true, maxWidth: 100}).addTo(this.map);
 	this.map.addControl(new L.Control.OSMGeocoder());
-	setMarker(L.GeoIP.getPosition(), 15);
-}
-
-function setMarker(latlng, zoom){
-	var marker,tips;
-
-	tips = latlng.lat + '<br />' + latlng.lng;
-	marker = L.marker(latlng).addTo(this.map).bindPopup(tips).openPopup();
-	this.map.setView(latlng,zoom);
+	
+	//setMarker(L.GeoIP.getPosition(), 15);
+	L.CQW.setMarker(this.map, L.GeoIP.getPosition(), {zoom:15,tips:"aa"});
 }
