@@ -11,7 +11,8 @@ function InitMap(){
 
 	this.map.addLayer(L.tileLayer(baseTileServer));
 	
-	L.control.attribution({prefix:'GPSCQW'}).addTo(this.map);
+	L.control.attribution({prefix:'&copy; <a href="https://github.com/FreeSmall/GPSCQW">GPS Coordinates Query Website.</a> | \
+	@<a href="help.html">help</a>'}).addTo(this.map);
 	L.control.zoom({position:'bottomright'}).addTo(this.map);
 	
 	L.control.LatLngInfo().addTo(this.map);

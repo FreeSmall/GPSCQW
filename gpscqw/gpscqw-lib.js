@@ -13,7 +13,36 @@
     }
 })(function (L) {
 
+L.CQW = L.extend({
+	FormatString: function (number, form) {
+		var forms = form.split('.');
+		var number = '' + number;
+		var numbers = number.split('.');
+		var leftnumber = numbers[0].split('');
+		var exec = function (lastMatch) {
+				if (lastMatch == '0' || lastMatch == '#') {
+					if (leftnumber.length) {
+						return leftnumber.pop();
+					} else if (lastMatch == '0') {
+						return lastMatch;
+					} else {
+						return '';
+					}
+				} else {
+					return lastMatch;
+				}
+		};
 
+		string = forms[0].split('').reverse().join('').replace(/./g, exec).split('').reverse().join('');
+		string = leftnumber.join('') + string;
+
+		if (forms[1] && forms[1].length) {
+			leftnumber = (numbers[1] && numbers[1].length) ? numbers[1].split('').reverse() : [];
+			string += '.' + forms[1].replace(/./g, exec);
+		}
+		return string.replace('//.$/', '');
+	}
+});
 /*
  **********************************************
  * This is for Showing GeoCoordinates on map. *
@@ -39,18 +68,17 @@ L.Control.LatLngInfo = L.Control.extend({
 		return container;
 	},
 
-	
+
 	_addLatLngInfo: function (options, className, container) {
 		this._mLatLngInfo = L.DomUtil.create('div', className, container);
 	},
 
 	_update: function (e) {
 		var cText;
-		cText = 'Lat: ' 
-			+ L.Util.formatNum(e.latlng.lat, 5)
-			+ '<br >Lng: ' 
-			+ L.Util.formatNum(e.latlng.lng, 5);//this.latLonToEN([e.latlng.lat, e.latlng.lng]);
-		
+		cText = 'Lat:' 
+			+ L.CQW.FormatString(e.latlng.lat, '000.00000')
+			+ ' Lng:' 
+			+ L.CQW.FormatString(e.latlng.lng, '000.00000');
 		this._mLatLngInfo.innerHTML = cText;
 	},
 	_close: function(){
@@ -65,8 +93,8 @@ L.Control.LatLngInfo = L.Control.extend({
 		nND=parseInt(lonlat[1]);
 		nNF=parseInt((lonlat[1]-nND)*60);
 		nNM=parseInt(((lonlat[1]-nND)*60-nNF)*60);
-		nE="N"+nED.toString()+"°"+nEF.toString()+"'"+nEM.toString()+"?";
-		nN="E"+nND.toString()+"°"+nNF.toString()+"'"+nNM.toString()+"?";
+		nE="N"+nED.toString()+"Â°"+nEF.toString()+"'"+nEM.toString()+"â€³";
+		nN="E"+nND.toString()+"Â°"+nNF.toString()+"'"+nNM.toString()+"â€³";
 		return nE+" | "+nN;
 	}
 });
@@ -152,6 +180,7 @@ L.Control.OSMGeocoder = L.Control.extend({
 		this._span_ipt = L.DomUtil.create('span', className + '-span_iptwr');
 		this._input = L.DomUtil.create('input', className + '-input');
 		this._input.type = "text";
+		this._input.placeholder = "IP|Coordinates|Place";
 		
 		this._span_bt = L.DomUtil.create('span', className + '-span_btwr');
 		this._submit = L.DomUtil.create('input', className + '-submit');
@@ -206,7 +235,7 @@ L.Control.OSMGeocoder = L.Control.extend({
     },
     _isLatLon_decMin : function (q) {
         console.log("is LatLon_decMin: "+q);
-        //N 53° 13.785' E 010° 23.887'
+        //N 53Â° 13.785' E 010Â° 23.887'
         //re = /[NS]\s*(\d+)\D*(\d+\.\d+).?\s*[EW]\s*(\d+)\D*(\d+\.\d+)\D*/;
         re = /([ns])\s*(\d+)\D*(\d+\.\d+).?\s*([ew])\s*(\d+)\D*(\d+\.\d+)/i;
         m = re.exec(q.toLowerCase());
@@ -220,12 +249,36 @@ L.Control.OSMGeocoder = L.Control.extend({
 		}
         // +- dec min +- dec min
     },
-
+    _isIpCoordinates : function (q) {
+        //"ip" => xxx.xxx.xxx.xxx
+		var ip_reg, rs, m, ip = undefined;
+		console.log("is _isIpCoordinates: "+q);
+        ip_reg = /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/;
+        rs = ip_reg.exec(q);
+		
+		if(rs == undefined && q != null){
+			return null;
+		}
+		
+		ip = (q == null ? undefined : rs[0]);
+		if (rs != undefined){
+			m = L.GeoIP.getPosition(ip);
+			console.log("is _isIpCoordinates m: "+m);
+			return m;
+		}
+		
+    },
 	_geocode : function (event) {
 		L.DomEvent.preventDefault(event);
         var q = this._input.value;
         //try to find corrdinates
-		if (this._isLatLon(q) != null){
+		if (q === '' || this._isIpCoordinates(q) != null){
+			var m = this._isIpCoordinates(q);
+			console.log("pzhaoyang0");
+			console.log("_isIpCoordinates: m="+ m);
+			this.options.callback.call(this, this._createSearchResult(m.lat, m.lng));
+			return;
+		}else if (this._isLatLon(q) != null){
 			var m = this._isLatLon(q);
 			console.log("pzhaoyang1");
 			console.log("LatLon_geocode: "+m[1]+" "+m[2]);
