@@ -59,6 +59,22 @@ L.CQW = {
 
 		L.marker(latlng).addTo(map).bindPopup(_options.tips).openPopup();
 		map.setView(latlng, _options.zoom);
+	},
+	
+	HttpReq: function(url, options){
+		var _options = {
+			method:'get',
+			async:false,
+			callback: undefined
+		};
+		
+		for (var i in options) {
+			_options[i] = options[i];
+		}
+		xhr = new XMLHttpRequest();
+        xhr.open(_options.method, url, _options.async);
+        xhr.onload = _options.callback;
+        xhr.send();
 	}
 };
 
@@ -138,19 +154,15 @@ L.GeoIP = L.extend({
             //lookup our own ip address
         }
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, false);
-        xhr.onload = function () {
-            var status = xhr.status;
-            if (status == 200) {
-                var geoip_response = JSON.parse(xhr.responseText);
-                result.lat = geoip_response.latitude;
-                result.lng = geoip_response.longitude;
+		L.CQW.HttpReq(url, {callback:function(){
+           if (this.status == 200) {
+                var resp = JSON.parse(this.responseText);
+                result.lat = resp.latitude;
+                result.lng = resp.longitude;
             } else {
-                console.log("Leaflet.GeoIP.getPosition failed because its XMLHttpRequest got this response: " + xhr.status);
+                console.log("Leaflet.GeoIP.getPosition failed because its XMLHttpRequest got this response: " + this.status);
             }
-        };
-        xhr.send();
+		}});
         return result;
     },
 
