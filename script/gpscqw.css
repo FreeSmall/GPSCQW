@@ -71,6 +71,7 @@ html,body {
 	background-position:0px 0px;
 	cursor:pointer;
 	border: none;
+	alt:"Search Photo On Map";
 }
 
 .leaflet-control-geocoder-span_btwr{

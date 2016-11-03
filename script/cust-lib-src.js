@@ -249,12 +249,14 @@ L.Control.OSMGeocoder = L.Control.extend({
 		
 		this._input_img = L.DomUtil.create('input', className + '-img');
 		this._input_img.type = "button";
+		this._input_img.alt = "Search Photo On Map";
 		this._input_img.addEventListener("mouseover", function(){this.style.backgroundPosition = '0 -20px';}, false);
 		this._input_img.addEventListener("mouseout", function(){this.style.backgroundPosition = '0 0';}, false);
 		this._input_img.addEventListener("click", this._browsePhoto, false);
-		
+
 		this._span_bt = L.DomUtil.create('span', className + '-span_btwr');
 		this._submit = L.DomUtil.create('input', className + '-submit');
+		this._submit.alt = "Search Photo On Map";
 		this._submit.type = "submit";
 		this._submit.value = this.options.text;
 
@@ -274,23 +276,26 @@ L.Control.OSMGeocoder = L.Control.extend({
 	},
     
 	_browsePhoto: function(){
-		var _path='';
-		try{ 
-			var Message = "请选择文件夹"; //选择框提示信息 
-			var Shell = new ActiveXObject( "Shell.Application" ); 
-			var Folder = Shell.BrowseForFolder(0,Message,0x0040,0x11);//起始目录为：我的电脑 
-			if(Folder != null){ 
-				Folder = Folder.items(); // 返回 FolderItems 对象 
-				Folder = Folder.item(); // 返回 Folderitem 对象 
-				Folder = Folder.Path; // 返回路径 
-				if(Folder.charAt(Folder.length-1) != "\\"){ 
-					Folder = Folder + "\\"; 
-				} 
-				_path=Folder; 
-			} 
-		}catch(e){ 
-			alert("请在ie设置中启用AcitveX控件相关选项。");
-		}
+		var fso, drv, s ="";
+		fso = new ActiveXObject("Scripting.FileSystemObject");
+		drv = fso.GetDrive(fso.GetDriveName("E:\\"));
+		s += "E盘:" + " - \n";
+		s += "硬盘大小：" + Math.floor(drv.TotalSize / 1024/1024/1024);
+		s += " GB" + "\n";
+		s += "硬盘可用空间：" + Math.floor(drv.FreeSpace / 1024/1024/1024);
+		s += " GB" + "\n";
+		s += "硬盘可用空间：" + Math.floor(drv.AvailableSpace / 1024/1024/1024);
+		s += " GB" + "\n";
+		s += "驱动器盘符：" + drv.DriveLetter+"盘\n";
+		s += "驱动器类型：" +drv.DriveType+"\n";
+		s += "驱动器的系列码:" +drv.SerialNumber+"\n";
+		s += "驱动器的文件系统类型:" +drv.FileSystem+"\n";
+		s += "驱动器是否可用:" +drv.IsReady+"\n";
+		s += "共享名称:" +drv.ShareName+"\n";
+		s += "卷标名称:" +drv.VolumeName+"\n";
+		s += "驱动器的路径或者根目录名称:" +drv.Path+"\n";
+		s += "驱动器的路径或者根目录名称:" +drv.RootFolder+"\n";
+		alert(s);
 	},
 	
     /* helper functions for cordinate extraction */
