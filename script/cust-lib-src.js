@@ -250,11 +250,13 @@ L.Control.OSMGeocoder = L.Control.extend({
 		this._span_div = L.DomUtil.create('span', className + '-span_div');
 		this._div_img = L.DomUtil.create('a', className + '-a');
 		this._input_img = L.DomUtil.create('input', className + '-img');
+		this._input_img.accept = "image/jpeg,image/tiff";
+		this._input_img.multiple = "multiple";
 		this._input_img.type = "file";
 		//this._input_img.alt = "Search Photo On Map";
-		this._input_img.addEventListener("mouseover", function(){this.style.backgroundPosition = '0 -20px';}, false);
-		this._input_img.addEventListener("mouseout", function(){this.style.backgroundPosition = '0 0';}, false);
-		this._input_img.addEventListener("onchange", this._browsePhoto, false);
+		//this._input_img.addEventListener("mouseover", function(){this.style.backgroundPosition = '0 -20px';}, false);
+		//this._input_img.addEventListener("mouseout", function(){this.style.backgroundPosition = '0 0';}, false);
+		this._input_img.addEventListener("change", this._browsePhoto, false);
 
 		this._span_bt = L.DomUtil.create('span', className + '-span_btwr');
 		this._submit = L.DomUtil.create('input', className + '-submit');
@@ -282,8 +284,8 @@ L.Control.OSMGeocoder = L.Control.extend({
     
 	_browsePhoto: function(){
 		var file;
-		//var destination = document.getElementById('destination');
-		//destination.innerHTML = '';
+		var destination = L.DomUtil.create('p', 'p-img');
+		destination.innerHTML = '';
 
 		// 循环用户多选的文件
 		for(var x = 0, xlen = this.files.length; x < xlen; x++) {
@@ -296,12 +298,13 @@ L.Control.OSMGeocoder = L.Control.extend({
 					var img = new Image();
 					img.src = e.target.result; // 显示图片的地方
 
-					//destination.appendChild(img);
+					destination.appendChild(img);
 				};
 				
 				reader.readAsDataURL(file);
 			}
 		}
+		popup(destination);
 	},
 	
     /* helper functions for cordinate extraction */
