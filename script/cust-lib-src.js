@@ -247,22 +247,27 @@ L.Control.OSMGeocoder = L.Control.extend({
 		this._input.placeholder = "IP | Coordinates | Place";
 		
 		
+		this._span_div = L.DomUtil.create('span', className + '-span_div');
+		this._div_img = L.DomUtil.create('a', className + '-a');
 		this._input_img = L.DomUtil.create('input', className + '-img');
-		this._input_img.type = "button";
-		this._input_img.alt = "Search Photo On Map";
+		this._input_img.type = "file";
+		//this._input_img.alt = "Search Photo On Map";
 		this._input_img.addEventListener("mouseover", function(){this.style.backgroundPosition = '0 -20px';}, false);
 		this._input_img.addEventListener("mouseout", function(){this.style.backgroundPosition = '0 0';}, false);
-		this._input_img.addEventListener("click", this._browsePhoto, false);
+		this._input_img.addEventListener("onchange", this._browsePhoto, false);
 
 		this._span_bt = L.DomUtil.create('span', className + '-span_btwr');
 		this._submit = L.DomUtil.create('input', className + '-submit');
-		this._submit.alt = "Search Photo On Map";
+		//this._submit.alt = "Search Photo On Map";
 		this._submit.type = "submit";
 		this._submit.value = this.options.text;
 
 		this._form.appendChild(this._span_ipt);
 		this._span_ipt.appendChild(this._input);
-		this._span_ipt.appendChild(this._input_img);
+		
+		this._form.appendChild(this._span_div);
+		this._span_div.appendChild(this._div_img);
+		this._div_img.appendChild(this._input_img);
 		
 		
 		this._form.appendChild(this._span_bt);
@@ -276,26 +281,27 @@ L.Control.OSMGeocoder = L.Control.extend({
 	},
     
 	_browsePhoto: function(){
-		var fso, drv, s ="";
-		fso = new ActiveXObject("Scripting.FileSystemObject");
-		drv = fso.GetDrive(fso.GetDriveName("E:\\"));
-		s += "E盘:" + " - \n";
-		s += "硬盘大小：" + Math.floor(drv.TotalSize / 1024/1024/1024);
-		s += " GB" + "\n";
-		s += "硬盘可用空间：" + Math.floor(drv.FreeSpace / 1024/1024/1024);
-		s += " GB" + "\n";
-		s += "硬盘可用空间：" + Math.floor(drv.AvailableSpace / 1024/1024/1024);
-		s += " GB" + "\n";
-		s += "驱动器盘符：" + drv.DriveLetter+"盘\n";
-		s += "驱动器类型：" +drv.DriveType+"\n";
-		s += "驱动器的系列码:" +drv.SerialNumber+"\n";
-		s += "驱动器的文件系统类型:" +drv.FileSystem+"\n";
-		s += "驱动器是否可用:" +drv.IsReady+"\n";
-		s += "共享名称:" +drv.ShareName+"\n";
-		s += "卷标名称:" +drv.VolumeName+"\n";
-		s += "驱动器的路径或者根目录名称:" +drv.Path+"\n";
-		s += "驱动器的路径或者根目录名称:" +drv.RootFolder+"\n";
-		alert(s);
+		var file;
+		//var destination = document.getElementById('destination');
+		//destination.innerHTML = '';
+
+		// 循环用户多选的文件
+		for(var x = 0, xlen = this.files.length; x < xlen; x++) {
+			file = this.files[x];
+			if(file.type.indexOf('image') != -1) { // 非常简单的交验
+
+				var reader = new FileReader();
+
+				reader.onload = function(e) {
+					var img = new Image();
+					img.src = e.target.result; // 显示图片的地方
+
+					//destination.appendChild(img);
+				};
+				
+				reader.readAsDataURL(file);
+			}
+		}
 	},
 	
     /* helper functions for cordinate extraction */
